@@ -28,6 +28,8 @@ type ChromeDriver struct {
 	LogPath string
 	// Log file to dump chromedriver stdout/stderr. If "" send to terminal. Default: ""
 	LogFile string
+	// Environment passed to the cmd. Default: nil
+	Env []string
 	// Start method fails if Chromedriver doesn't start in less than StartTimeout. Default 20s.
 	StartTimeout time.Duration
 
@@ -47,6 +49,7 @@ func NewChromeDriver(path string) *ChromeDriver {
 	d.BaseUrl = ""
 	d.Threads = 4
 	d.LogPath = "chromedriver.log"
+	d.Env = nil
 	d.StartTimeout = 20 * time.Second
 	return d
 }
@@ -88,6 +91,7 @@ func (d *ChromeDriver) Start() error {
 	if err != nil {
 		return errors.New(csferr + err.Error())
 	}
+	d.cmd.Env = d.Env
 	if err := d.cmd.Start(); err != nil {
 		return errors.New(csferr + err.Error())
 	}
